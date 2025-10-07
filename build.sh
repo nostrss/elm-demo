@@ -53,3 +53,11 @@ echo "Updated 404.html"
 find . -maxdepth 1 -name "elm.*.js" ! -name "$NEW_FILENAME" -delete 2>/dev/null || true
 
 echo "Build complete! Generated: $NEW_FILENAME"
+
+# Create public directory and copy files for Vercel deployment
+echo "Preparing files for deployment..."
+mkdir -p public
+cp "$NEW_FILENAME" public/
+cp index.html public/
+cp 404.html public/
+echo "Files copied to public/ directory"

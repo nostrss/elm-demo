@@ -1,6 +1,6 @@
 {
   "buildCommand": "./build.sh",
-  "outputDirectory": ".",
+  "outputDirectory": "public",
   "routes": [
     {
       "src": "/(.*)",
