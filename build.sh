@@ -25,15 +25,15 @@ NEW_FILENAME="elm.$HASH.js"
 mv elm.js "$NEW_FILENAME"
 echo "Created: $NEW_FILENAME"
 
-# Update index.html to reference the new filename
+# Update index.html to reference the new filename (in script src only)
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS
-    sed -i '' "s/elm\.[a-f0-9]\{8\}\.js/$NEW_FILENAME/g" index.html
-    sed -i '' "s/elm\.js/$NEW_FILENAME/g" index.html
+    sed -i '' "s/<script src=\"elm\.[a-f0-9]\{8\}\.js\">/<script src=\"$NEW_FILENAME\">/g" index.html
+    sed -i '' "s/<script src=\"elm\.js\">/<script src=\"$NEW_FILENAME\">/g" index.html
 else
     # Linux
-    sed -i "s/elm\.[a-f0-9]\{8\}\.js/$NEW_FILENAME/g" index.html
-    sed -i "s/elm\.js/$NEW_FILENAME/g" index.html
+    sed -i "s/<script src=\"elm\.[a-f0-9]\{8\}\.js\">/<script src=\"$NEW_FILENAME\">/g" index.html
+    sed -i "s/<script src=\"elm\.js\">/<script src=\"$NEW_FILENAME\">/g" index.html
 fi
 echo "Updated index.html"
 
