@@ -7,6 +7,9 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
 import Json.Decode as Decode exposing (Decoder, field, string)
+import Page.PostDetail
+import Page.PostList
+import Types exposing (Post, WebData(..))
 import Url
 import Url.Parser as Parser exposing ((</>), Parser, top)
 
@@ -29,15 +32,6 @@ main =
 -- MODEL
 
 
-type alias Post =
-    { id : Int
-    , title : String
-    , content : String
-    , userId : Int
-    , createdAt : String
-    }
-
-
 type alias Model =
     { key : Nav.Key
     , page : Page
@@ -50,12 +44,6 @@ type Page
     = PostListPage
     | PostDetailPage Int
     | NotFound
-
-
-type WebData a
-    = Loading
-    | Success a
-    | Failure
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -217,76 +205,13 @@ view model =
         [ div [ style "padding" "20px", style "font-family" "sans-serif" ]
             [ case model.page of
                 PostListPage ->
-                    viewPostList model.posts
+                    Page.PostList.view model.posts
 
                 PostDetailPage _ ->
-                    viewPostDetail model.postDetail
+                    Page.PostDetail.view model.postDetail
 
                 NotFound ->
                     div [] [ text "404 - Page not found" ]
             ]
         ]
     }
-
-
-viewPostList : WebData (List Post) -> Html Msg
-viewPostList webData =
-    case webData of
-        Loading ->
-            div [] [ text "Loading..." ]
-
-        Failure ->
-            div [] [ text "Failed to load posts." ]
-
-        Success posts ->
-            div []
-                [ h1 [] [ text "Posts" ]
-                , ul [ style "list-style" "none", style "padding" "0" ]
-                    (List.map viewPostItem posts)
-                ]
-
-
-viewPostItem : Post -> Html Msg
-viewPostItem post =
-    li
-        [ style "border" "1px solid #ddd"
-        , style "margin" "10px 0"
-        , style "padding" "15px"
-        , style "border-radius" "5px"
-        ]
-        [ a
-            [ href ("/post/" ++ String.fromInt post.id)
-            , style "text-decoration" "none"
-            , style "color" "#333"
-            ]
-            [ h3 [ style "margin" "0 0 10px 0" ] [ text post.title ]
-            , p [ style "color" "#666", style "margin" "0" ]
-                [ text ("작성자: " ++ String.fromInt post.userId)
-                , text " | "
-                , text post.createdAt
-                ]
-            ]
-        ]
-
-
-viewPostDetail : WebData Post -> Html Msg
-viewPostDetail webData =
-    case webData of
-        Loading ->
-            div [] [ text "Loading..." ]
-
-        Failure ->
-            div [] [ text "Failed to load post detail." ]
-
-        Success post ->
-            div []
-                [ a [ href "/" ] [ text "← Back to list" ]
-                , h1 [ style "margin-top" "20px" ] [ text post.title ]
-                , div [ style "color" "#666", style "margin" "10px 0" ]
-                    [ text ("작성자: " ++ String.fromInt post.userId)
-                    , text " | "
-                    , text post.createdAt
-                    ]
-                , div [ style "margin-top" "20px", style "line-height" "1.6" ]
-                    [ text post.content ]
-                ]
